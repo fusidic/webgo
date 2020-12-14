@@ -1,26 +1,24 @@
 package base
 
 import (
-	"fmt"
 	"net/http"
 )
 
 // HandlerFunc defines the request handler used by webgo.
-type HandlerFunc func(http.ResponseWriter, *http.Request)
+type HandlerFunc func(*Context)
 
 // Engine implement the interface of HTTP Server
 type Engine struct {
-	router map[string]HandlerFunc
+	router *router
 }
 
 // New is the constructor of webgo.Engine
 func New() *Engine {
-	return &Engine{router: make(map[string]HandlerFunc)}
+	return &Engine{router: newRouter()}
 }
 
 func (e *Engine) addRoute(method string, pattern string, handler HandlerFunc) {
-	key := method + "-" + pattern
-	e.router[key] = handler
+	e.router.addRouter(method, pattern, handler)
 }
 
 // GET defines the method to add GET request.
@@ -40,10 +38,6 @@ func (e *Engine) Run(addr string) (err error) {
 
 // ServeHTTP is the unified entrance of request.
 func (e *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	key := req.Method + "-" + req.URL.Path
-	if handler, ok := e.router[key]; ok {
-		handler(w, req)
-	} else {
-		fmt.Fprintf(w, "404 NOT FOUND: %s\n", req.URL)
-	}
+	c := newContext(w, req)
+	e.router.handle(c)
 }
