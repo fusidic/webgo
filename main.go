@@ -12,7 +12,7 @@ func main() {
 		c.HTML(http.StatusOK, "<h1>hi there</h1>")
 	})
 	r.GET("/hello", func(c *base.Context) {
-		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Query("name"), c.Path)
+		c.String(http.StatusOK, "hello %s, Path: %s, Method: %s\n", c.Query("name"), c.Path, c.Method)
 	})
 
 	r.POST("/login", func(c *base.Context) {
