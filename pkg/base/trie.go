@@ -34,7 +34,6 @@ func (n *node) matchChildren(part string) []*node {
 // pattern 待插入
 // parts pattern 按层拆分
 // height 指定插入的高度
-// 通过递归的方式将 pattern 插到目标层
 func (n *node) insert(pattern string, parts []string, height int) {
 	// 当高度匹配的时候，执行插入操作
 	if len(parts) == height {
