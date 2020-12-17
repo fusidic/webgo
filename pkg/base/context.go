@@ -74,20 +74,20 @@ func (c *Context) Status(code int) {
 	c.Writer.WriteHeader(code)
 }
 
-// SetHeader set requests' header. With the form as
+// SetHeader set responses' header. With the form as
 // "Content-type": "text/plain" or "application/json" or "text/html"
 func (c *Context) SetHeader(key string, value string) {
 	c.Writer.Header().Set(key, value)
 }
 
-// String pass string to the request packet.
+// String pass string to the response packet.
 func (c *Context) String(code int, format string, values ...interface{}) {
 	c.SetHeader("Content-Type", "text/plain")
 	c.Status(code)
 	c.Writer.Write([]byte(fmt.Sprintf(format, values...)))
 }
 
-// JSON pass JSON to the request packet.
+// JSON pass JSON to the response packet.
 func (c *Context) JSON(code int, obj interface{}) {
 	c.SetHeader("Content-Type", "application/json")
 	c.Status(code)

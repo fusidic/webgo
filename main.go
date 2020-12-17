@@ -33,16 +33,21 @@ func FormatAsDate(t time.Time) string {
 func main() {
 	e := base.New()
 	// global middleware
-	e.Use(base.Logger())
+	e.Use(base.Logger(), base.Recovery())
 
+	// 用户定义渲染函数
 	e.SetFuncMap(template.FuncMap{
 		"FormatAsDate": FormatAsDate,
 	})
+	// 其他默认渲染
 	e.LoadHTMLGlob("templates/*")
+
+	// 加入静态地址与对应的handler
 	e.Static("/assets", "./static")
 
 	stu1 := &student{Name: "fusidic", Age: 20}
 	stu2 := &student{Name: "arithbar", Age: 21}
+	// HTML中加载所有e.htmlTemplates
 	e.GET("/", func(c *base.Context) {
 		c.HTML(http.StatusOK, "css.tmpl", nil)
 	})
@@ -84,6 +89,12 @@ func main() {
 			})
 		})
 	}
+
+	// index out of range for testing Recovery()
+	e.GET("/panic", func(c *base.Context) {
+		names := []string{"fusidic"}
+		c.String(http.StatusOK, names[100])
+	})
 
 	e.Run(":9999")
 }

@@ -68,7 +68,8 @@ func (rg *RouterGroup) POST(pattern string, handler HandlerFunc) {
 	rg.addRoute("POST", pattern, handler)
 }
 
-// create static handler
+// createStaticHandler receives rendering files' path
+// and return rendering handler.
 func (rg *RouterGroup) createStaticHandler(relativePath string, fs http.FileSystem) HandlerFunc {
 	absolutePath := path.Join(rg.prefix, relativePath)
 	fileServer := http.StripPrefix(absolutePath, http.FileServer(fs))
@@ -120,4 +121,11 @@ func (e *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	c.handlers = middlewares
 	c.engine = e
 	e.router.handle(c)
+}
+
+// Default use Logger() & Recovery() middlewares by default.
+func Default() *Engine {
+	e := New()
+	e.Use(Logger(), Recovery())
+	return e.engine
 }
